@@ -1,7 +1,7 @@
 import os
 import json
 import torch
-import omegaconf
+from omegaconf import OmegaConf
 
 import torch.optim as optim
 from video_diffusion_pytorch import Unet3D, GaussianDiffusion
@@ -30,7 +30,7 @@ with open(data_division_file, "r") as f:
     data_div = json.load(f)
 
 
-experiment_config = omegaconf.load("train_v1_vanilla_config.yaml")
+experiment_config = OmegaConf.load("train_v1_vanilla_config.yaml")
 print(experiment_config)
 for key in experiment_config.keys():
     set_param(key, experiment_config[key])
