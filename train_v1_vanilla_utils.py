@@ -65,20 +65,20 @@ def train_or_eval_or_test_the_batch(
     batch_y = torch.zeros((batch_size, 3, num_frames, ct.shape[2], ct.shape[3]))
     for index in indices_list_first:
         batch_y[batch_size_count, 0, 0, :, :] = ct[:, index-7, :, :]
-        batch_y[batch_size_count, 0, 1, :, :] = ct[:, index-6, :, :]
-        batch_y[batch_size_count, 0, 2, :, :] = ct[:, index-5, :, :]
-        batch_y[batch_size_count, 1, 0, :, :] = ct[:, index-4, :, :]
+        batch_y[batch_size_count, 1, 0, :, :] = ct[:, index-6, :, :]
+        batch_y[batch_size_count, 2, 0, :, :] = ct[:, index-5, :, :]
+        batch_y[batch_size_count, 0, 1, :, :] = ct[:, index-4, :, :]
         batch_y[batch_size_count, 1, 1, :, :] = ct[:, index-3, :, :]
-        batch_y[batch_size_count, 1, 2, :, :] = ct[:, index-2, :, :]
-        batch_y[batch_size_count, 2, 0, :, :] = ct[:, index-1, :, :]
-        batch_y[batch_size_count, 2, 1, :, :] = ct[:, index, :, :]
+        batch_y[batch_size_count, 2, 1, :, :] = ct[:, index-2, :, :]
+        batch_y[batch_size_count, 0, 2, :, :] = ct[:, index-1, :, :]
+        batch_y[batch_size_count, 1, 2, :, :] = ct[:, index, :, :]
         batch_y[batch_size_count, 2, 2, :, :] = ct[:, index+1, :, :]
-        batch_y[batch_size_count, 3, 0, :, :] = ct[:, index+2, :, :]
-        batch_y[batch_size_count, 3, 1, :, :] = ct[:, index+3, :, :]
-        batch_y[batch_size_count, 3, 2, :, :] = ct[:, index+4, :, :]
-        batch_y[batch_size_count, 4, 0, :, :] = ct[:, index+5, :, :]
-        batch_y[batch_size_count, 4, 1, :, :] = ct[:, index+6, :, :]
-        batch_y[batch_size_count, 4, 2, :, :] = ct[:, index+7, :, :]
+        batch_y[batch_size_count, 0, 3, :, :] = ct[:, index+2, :, :]
+        batch_y[batch_size_count, 1, 3, :, :] = ct[:, index+3, :, :]
+        batch_y[batch_size_count, 2, 3, :, :] = ct[:, index+4, :, :]
+        batch_y[batch_size_count, 0, 4, :, :] = ct[:, index+5, :, :]
+        batch_y[batch_size_count, 1, 4, :, :] = ct[:, index+6, :, :]
+        batch_y[batch_size_count, 2, 4, :, :] = ct[:, index+7, :, :]
 
         batch_size_count += 1
 
