@@ -17,9 +17,10 @@ os.path.exists(root_dir) or os.makedirs(root_dir)
 data_division_file = "James_data_v3/cv_list.json"
 seeds = 729
 base_learning_rate = 1e-4
+num_frames = 5
 
 set_param("cv", 0)
-set_param("frame", 5)
+set_param("num_frames", num_frames)
 set_param("root", root_dir)
 set_param("lr", base_learning_rate)
 set_param("log_txt_path", os.path.join(root_dir, "log.txt"))
@@ -49,7 +50,7 @@ model = Unet3D(
 diffusion = GaussianDiffusion(
     model,
     image_size = 256,
-    num_frames = z_as_channel,
+    num_frames = num_frames,
     timesteps = 100,   # number of steps
     loss_type = 'l1'    # L1 or L2
 )

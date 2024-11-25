@@ -45,8 +45,8 @@ def train_or_eval_or_test_the_batch(
     ct = batch["CT"] # 1, z, 256, 256
     len_z = ct.shape[1]
     batch_per_eval = get_param("train_param")["batch_per_eval"]
-    frame = get_param("frame")
-    slice_z = frame * 3
+    num_frames = get_param("num_frames")
+    slice_z = num_frames * 3
     slice_offset = (slice_z) // 2
     
     ct = ct * 2 - 1
@@ -63,9 +63,9 @@ def train_or_eval_or_test_the_batch(
     # enumreate first dimension
     batch_size_count = 0
     batch_eval_count = 0
-    batch_y = torch.zeros((batch_size, 3, frame, ct.shape[2], ct.shape[3]))
+    batch_y = torch.zeros((batch_size, 3, num_frames, ct.shape[2], ct.shape[3]))
     for index in indices_list_first:
-        for i in range(frame):
+        for i in range(num_frames):
             # Calculate the start and end slice indices for the current frame
             start_idx = index - slice_offset + i * 3
             end_idx = start_idx + 3
