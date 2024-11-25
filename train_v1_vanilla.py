@@ -18,8 +18,10 @@ data_division_file = "James_data_v3/cv_list.json"
 seeds = 729
 base_learning_rate = 1e-4
 z_as_channel = 5
+model_scaling = 1
 
 set_param("cv", 0)
+set_param("es", model_scaling)
 set_param("z_as_channel", z_as_channel)
 set_param("root", root_dir)
 set_param("lr", base_learning_rate)
