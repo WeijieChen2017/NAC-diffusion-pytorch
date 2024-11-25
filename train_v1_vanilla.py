@@ -49,8 +49,8 @@ model = Unet3D(
 
 diffusion = GaussianDiffusion(
     model,
-    image_size = 256,
-    num_frames = 3,
+    image_size = 128,
+    num_frames = 5,
     timesteps = 100,   # number of steps
     loss_type = 'l1'    # L1 or L2
 ).to(device)

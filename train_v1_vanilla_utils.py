@@ -47,16 +47,19 @@ def train_or_eval_or_test_the_batch(
     batch_per_eval = get_param("train_param")["batch_per_eval"]
     num_frames = get_param("num_frames")
     slice_z = num_frames * 3
-    slice_offset = 9
+    slice_offset = 7
+    # 256 to 128
+
     
     ct = ct * 2 - 1
+    ct = ct[:, :, 64:-64]
 
     # 1, z, 256, 256 tensor
     case_loss_first = 0.0
     case_loss_second = 0.0
     case_loss_third = 0.0
 
-    indices_list_first = [i for i in range(4, ct.shape[1]-4)]
+    indices_list_first = [i for i in range(7, ct.shape[1]-7)]
 
     random.shuffle(indices_list_first)
 
@@ -64,21 +67,21 @@ def train_or_eval_or_test_the_batch(
     batch_size_count = 0
     batch_y = torch.zeros((batch_size, 3, num_frames, ct.shape[2], ct.shape[3]))
     for index in indices_list_first:
-        batch_y[batch_size_count, 0, 0, :, :] = ct[:, index-4, :, :]
-        batch_y[batch_size_count, 1, 0, :, :] = ct[:, index-3, :, :]
-        batch_y[batch_size_count, 2, 0, :, :] = ct[:, index-2, :, :]
-        batch_y[batch_size_count, 0, 1, :, :] = ct[:, index-1, :, :]
-        batch_y[batch_size_count, 1, 1, :, :] = ct[:, index, :, :]
-        batch_y[batch_size_count, 2, 1, :, :] = ct[:, index+1, :, :]
-        batch_y[batch_size_count, 0, 2, :, :] = ct[:, index+2, :, :]
-        batch_y[batch_size_count, 1, 2, :, :] = ct[:, index+3, :, :]
-        batch_y[batch_size_count, 2, 2, :, :] = ct[:, index+4, :, :]
-        # batch_y[batch_size_count, 0, 3, :, :] = ct[:, index+2, :, :]
-        # batch_y[batch_size_count, 1, 3, :, :] = ct[:, index+3, :, :]
-        # batch_y[batch_size_count, 2, 3, :, :] = ct[:, index+4, :, :]
-        # batch_y[batch_size_count, 0, 4, :, :] = ct[:, index+5, :, :]
-        # batch_y[batch_size_count, 1, 4, :, :] = ct[:, index+6, :, :]
-        # batch_y[batch_size_count, 2, 4, :, :] = ct[:, index+7, :, :]
+        batch_y[batch_size_count, 0, 0, :, :] = ct[:, index-7, :, :]
+        batch_y[batch_size_count, 1, 0, :, :] = ct[:, index-6, :, :]
+        batch_y[batch_size_count, 2, 0, :, :] = ct[:, index-5, :, :]
+        batch_y[batch_size_count, 0, 1, :, :] = ct[:, index-4, :, :]
+        batch_y[batch_size_count, 1, 1, :, :] = ct[:, index-3, :, :]
+        batch_y[batch_size_count, 2, 1, :, :] = ct[:, index-2, :, :]
+        batch_y[batch_size_count, 0, 2, :, :] = ct[:, index-1, :, :]
+        batch_y[batch_size_count, 1, 2, :, :] = ct[:, index, :, :]
+        batch_y[batch_size_count, 2, 2, :, :] = ct[:, index+1, :, :]
+        batch_y[batch_size_count, 0, 3, :, :] = ct[:, index+2, :, :]
+        batch_y[batch_size_count, 1, 3, :, :] = ct[:, index+3, :, :]
+        batch_y[batch_size_count, 2, 3, :, :] = ct[:, index+4, :, :]
+        batch_y[batch_size_count, 0, 4, :, :] = ct[:, index+5, :, :]
+        batch_y[batch_size_count, 1, 4, :, :] = ct[:, index+6, :, :]
+        batch_y[batch_size_count, 2, 4, :, :] = ct[:, index+7, :, :]
 
         batch_size_count += 1
 
@@ -100,10 +103,11 @@ def train_or_eval_or_test_the_batch(
 
             batch_size_count = 0
         
-        if (stage == "eval" or stage == "test") and batch_per_eval > 0:
-            case_loss_first = case_loss_first / batch_eval_count
-        else:
-            case_loss_first = case_loss_first / (len(indices_list_first) // batch_size + 1)
+    case_loss_first = case_loss_first / (len(indices_list_first) // batch_size + 1)
+        # if (stage == "eval" or stage == "test") and batch_per_eval > 0:
+        #     case_loss_first = case_loss_first / batch_eval_count
+        # else:
+        #     case_loss_first = case_loss_first / (len(indices_list_first) // batch_size + 1)
     
     # # enumreate second dimension
     # batch_size_count = 0
