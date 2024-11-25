@@ -54,9 +54,10 @@ def train_or_eval_or_test_the_batch(
     # 256 to 128
 
     # body is the body mask, only masked region should be from 0-1 to -1 to 1
-    ct[body] = ct[body] * 2 - 1
+    # ct[body] = ct[body] * 2 - 1
 
     # ct = ct * 2 - 1
+    # currently is simple from 0 to 1
     ct = ct[:, :, 96:-96, 96:-96]
 
     # 1, z, 256, 256 tensor
@@ -93,12 +94,12 @@ def train_or_eval_or_test_the_batch(
         if batch_size_count < batch_size and index != indices_list_first[-1]:
             continue
         else:
-            # we get a batch
-            save_batch_y = batch_y.cpu().numpy()
-            save_name = f"{root_dir}/batch_y_{index}_masked.npy"
-            np.save(save_name, save_batch_y)
-            printlog(f"save batch_y to {save_name}")
-            exit()
+            # # we get a batch
+            # save_batch_y = batch_y.cpu().numpy()
+            # save_name = f"{root_dir}/batch_y_{index}_masked.npy"
+            # np.save(save_name, save_batch_y)
+            # printlog(f"save batch_y to {save_name}")
+            # exit()
 
             batch_y = batch_y.to(device)
             
