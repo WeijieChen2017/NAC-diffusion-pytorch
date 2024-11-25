@@ -43,6 +43,8 @@ def train_or_eval_or_test_the_batch(
     #     steps = get_param("steps")
 
     ct = batch["CT"] # 1, z, 256, 256
+    body = batch["BODY"]
+    body = body > 0
     len_z = ct.shape[1]
     batch_per_eval = get_param("train_param")["batch_per_eval"]
     num_frames = get_param("num_frames")
@@ -51,8 +53,10 @@ def train_or_eval_or_test_the_batch(
     slice_offset = 7
     # 256 to 128
 
-    
-    ct = ct * 2 - 1
+    # body is the body mask, only masked region should be from 0-1 to -1 to 1
+    ct[body] = ct[body] * 2 - 1
+
+    # ct = ct * 2 - 1
     ct = ct[:, :, 96:-96, 96:-96]
 
     # 1, z, 256, 256 tensor
@@ -91,7 +95,7 @@ def train_or_eval_or_test_the_batch(
         else:
             # we get a batch
             save_batch_y = batch_y.cpu().numpy()
-            save_name = f"{root_dir}/batch_y_{index}.npy"
+            save_name = f"{root_dir}/batch_y_{index}_masked.npy"
             np.save(save_name, save_batch_y)
             printlog(f"save batch_y to {save_name}")
             exit()
@@ -507,18 +511,21 @@ def prepare_dataset(data_div, invlove_test=False):
         train_path_list.append({
             "PET": f"James_data_v3/TOFNAC_256_norm/TOFNAC_{hashname}_norm.nii.gz",
             "CT": f"James_data_v3/CTACIVV_256_norm/CTACIVV_{hashname}_norm.nii.gz",
+            "BODY": f"James_data_v3/mask/mask_body_contour_{hashname}.nii.gz",
         })
 
     for hashname in val_list:
         val_path_list.append({
             "PET": f"James_data_v3/TOFNAC_256_norm/TOFNAC_{hashname}_norm.nii.gz",
             "CT": f"James_data_v3/CTACIVV_256_norm/CTACIVV_{hashname}_norm.nii.gz",
+            "BODY": f"James_data_v3/mask/mask_body_contour_{hashname}.nii.gz",
         })
 
     for hashname in test_list:
         test_path_list.append({
             "PET": f"James_data_v3/TOFNAC_256_norm/TOFNAC_{hashname}_norm.nii.gz",
             "CT": f"James_data_v3/CTACIVV_256_norm/CTACIVV_{hashname}_norm.nii.gz",
+            "BODY": f"James_data_v3/mask/mask_body_contour_{hashname}.nii.gz",
         })
 
     # save the data division file
@@ -536,7 +543,7 @@ def prepare_dataset(data_div, invlove_test=False):
     with open(data_division_file, "w") as f:
         json.dump(data_division_dict, f, indent=4)
 
-    input_modality = ["PET", "CT"]
+    input_modality = ["PET", "CT", "BODY"]  
 
     # set the data transform
     train_transforms = Compose(
