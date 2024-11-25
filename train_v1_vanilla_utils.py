@@ -47,7 +47,7 @@ def train_or_eval_or_test_the_batch(
     batch_per_eval = get_param("train_param")["batch_per_eval"]
     num_frames = get_param("num_frames")
     slice_z = num_frames * 3
-    slice_offset = (slice_z) // 2
+    slice_offset = 7
     
     ct = ct * 2 - 1
 
@@ -56,28 +56,35 @@ def train_or_eval_or_test_the_batch(
     case_loss_second = 0.0
     case_loss_third = 0.0
 
-    indices_list_first = [i for i in range(slice_offset, ct.shape[1]-slice_offset)]
+    indices_list_first = [i for i in range(7, ct.shape[1]-7)]
 
     random.shuffle(indices_list_first)
 
     # enumreate first dimension
     batch_size_count = 0
-    batch_eval_count = 0
     batch_y = torch.zeros((batch_size, 3, num_frames, ct.shape[2], ct.shape[3]))
     for index in indices_list_first:
-        for i in range(num_frames):
-            # Calculate the start and end slice indices for the current frame
-            start_idx = index - slice_offset + i * 3
-            end_idx = start_idx + 3
-            
-            # Ensure the slices are within bounds
-            if end_idx <= len_z:
-                batch_y[batch_size_count, :, i] = ct[0, start_idx:end_idx]
+        batch_y[batch_size_count, 0, 0, :, :] = ct[:, index-7, :, :]
+        batch_y[batch_size_count, 0, 1, :, :] = ct[:, index-6, :, :]
+        batch_y[batch_size_count, 0, 2, :, :] = ct[:, index-5, :, :]
+        batch_y[batch_size_count, 1, 0, :, :] = ct[:, index-4, :, :]
+        batch_y[batch_size_count, 1, 1, :, :] = ct[:, index-3, :, :]
+        batch_y[batch_size_count, 1, 2, :, :] = ct[:, index-2, :, :]
+        batch_y[batch_size_count, 2, 0, :, :] = ct[:, index-1, :, :]
+        batch_y[batch_size_count, 2, 1, :, :] = ct[:, index, :, :]
+        batch_y[batch_size_count, 2, 2, :, :] = ct[:, index+1, :, :]
+        batch_y[batch_size_count, 3, 0, :, :] = ct[:, index+2, :, :]
+        batch_y[batch_size_count, 3, 1, :, :] = ct[:, index+3, :, :]
+        batch_y[batch_size_count, 3, 2, :, :] = ct[:, index+4, :, :]
+        batch_y[batch_size_count, 4, 0, :, :] = ct[:, index+5, :, :]
+        batch_y[batch_size_count, 4, 1, :, :] = ct[:, index+6, :, :]
+        batch_y[batch_size_count, 4, 2, :, :] = ct[:, index+7, :, :]
 
         batch_size_count += 1
 
-        if batch_eval_count == batch_per_eval:
-            # we get a batch
+        if batch_size_count < batch_size and index != indices_list_first[-1]:
+            continue
+        else:
             batch_y = batch_y.to(device)
             
             if stage == "train":
