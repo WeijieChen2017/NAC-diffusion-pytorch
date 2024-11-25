@@ -44,13 +44,11 @@ def train_or_eval_or_test_the_batch(
 
     ct = batch["CT"] # 1, z, 256, 256
     len_z = ct.shape[1]
-
-    es = get_param("es")
-    vqs = get_param("vq_scaling")
     batch_per_eval = get_param("train_param")["batch_per_eval"]
-    zac = get_param("z_as_channel")
-    eo = (zac - 1) // 2 # ends_offset
-
+    frame = get_param("frame")
+    slice_z = frame * 3
+    slice_offset = (slice_z) // 2
+    
     ct = ct * 2 - 1
 
     # 1, z, 256, 256 tensor
@@ -58,34 +56,27 @@ def train_or_eval_or_test_the_batch(
     case_loss_second = 0.0
     case_loss_third = 0.0
 
-    # pad shape
-    if len_z % es != 0:
-        pad_size = es - len_z % es
-        ct = torch.nn.functional.pad(ct, (0, 0, 0, 0, 0, pad_size, 0, 0), mode='constant', value=0)
-
-    # printlog(f"pet shape {pet.shape}, ct shape {ct.shape}")
-
-    indices_list_first = [i for i in range(1, ct.shape[1]-eo)]
-    # indices_list_second = [i for i in range(1, ct.shape[2]-eo)]
-    # indices_list_third = [i for i in range(1, ct.shape[3]-eo)]
+    indices_list_first = [i for i in range(slice_offset, ct.shape[1]-slice_offset)]
 
     random.shuffle(indices_list_first)
-    # random.shuffle(indices_list_second)
-    # random.shuffle(indices_list_third)
 
     # enumreate first dimension
     batch_size_count = 0
     batch_eval_count = 0
-    batch_y = torch.zeros((batch_size, 1, zac, ct.shape[2], ct.shape[3]))
-    for indices in indices_list_first:
-        slice_y = ct[:, indices-eo:indices+eo+1, :, :]
+    batch_y = torch.zeros((batch_size, 3, frame, ct.shape[2], ct.shape[3]))
+    for index in indices_list_first:
+        for i in range(frame):
+            # Calculate the start and end slice indices for the current frame
+            start_idx = index - slice_offset + i * 3
+            end_idx = start_idx + 3
+            
+            # Ensure the slices are within bounds
+            if end_idx <= len_z:
+                batch_y[batch_size_count, :, i] = ct[0, start_idx:end_idx]
+
         batch_size_count += 1
 
-        batch_y[batch_size_count-1] = slice_y
-
-        if batch_size_count < batch_size and indices != indices_list_first[-1]:
-            continue
-        else:
+        if batch_eval_count == batch_per_eval:
             # we get a batch
             batch_y = batch_y.to(device)
             
