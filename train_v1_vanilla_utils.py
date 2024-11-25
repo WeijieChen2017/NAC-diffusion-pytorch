@@ -52,7 +52,7 @@ def train_or_eval_or_test_the_batch(
 
     
     ct = ct * 2 - 1
-    ct = ct[:, :, 64:-64]
+    ct = ct[:, :, 64:-64, 64:-64]
 
     # 1, z, 256, 256 tensor
     case_loss_first = 0.0
