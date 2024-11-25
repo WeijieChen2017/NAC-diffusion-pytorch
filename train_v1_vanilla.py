@@ -1,7 +1,7 @@
 import os
 import json
 import torch
-import OmegaConf
+import omegaconf
 
 import torch.optim as optim
 from video_diffusion_pytorch import Unet3D, GaussianDiffusion
