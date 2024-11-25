@@ -46,6 +46,7 @@ def train_or_eval_or_test_the_batch(
     len_z = ct.shape[1]
     batch_per_eval = get_param("train_param")["batch_per_eval"]
     num_frames = get_param("num_frames")
+    root_dir = get_param("root")
     slice_z = num_frames * 3
     slice_offset = 7
     # 256 to 128
@@ -88,6 +89,13 @@ def train_or_eval_or_test_the_batch(
         if batch_size_count < batch_size and index != indices_list_first[-1]:
             continue
         else:
+            # we get a batch
+            save_batch_y = batch_y.cpu().numpy()
+            save_name = f"{root_dir}/batch_y_{index}.npy"
+            np.save(save_name, save_batch_y)
+            printlog(f"save batch_y to {save_name}")
+            exit()
+
             batch_y = batch_y.to(device)
             
             if stage == "train":
