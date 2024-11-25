@@ -53,7 +53,7 @@ diffusion = GaussianDiffusion(
     num_frames = num_frames,
     timesteps = 100,   # number of steps
     loss_type = 'l1'    # L1 or L2
-)
+).to(device)
 
 optimizer = optim.AdamW(model.parameters(), lr=base_learning_rate)
 
